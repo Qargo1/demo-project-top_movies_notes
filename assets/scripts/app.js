@@ -36,8 +36,15 @@ const deleteMovie = (id) => {
 const deleteMovieHandler = (id) => {
     deleteMovieModal.classList.add('visible');
     toggleBackdrop();
-    const btnPassive = document.querySelector('#delete-modal .btn--passive');
-    const btnActive = document.querySelector('.modal__actions .btn--danger');
+    let btnPassive = document.querySelector('#delete-modal .btn--passive');
+    let btnActive = document.querySelector('.modal__actions .btn--danger');
+
+    btnPassive.replaceWith(btnPassive.cloneNode(true));
+    btnPassive = document.querySelector('#delete-modal .btn--passive');
+
+    btnActive.replaceWith(btnActive.cloneNode(true));
+    btnActive = document.querySelector('.modal__actions .btn--danger');
+
     btnPassive.addEventListener('click', () => {
         deleteMovieModal.classList.remove('visible');
         if (backdrop.classList.contains('visible')) {
@@ -50,10 +57,11 @@ const deleteMovieHandler = (id) => {
             toggleBackdrop();
         }
         deleteMovie(id);
+        updateUI();
     });
 }
 
-const renderNewMovieElement = (id, title, imgURL, rating) => {
+const renderNewMovieElement = (movieID, title, imgURL, rating) => {
     const newMovieElement = document.createElement('li');
     newMovieElement.className = 'movie-element';
     newMovieElement.innerHTML = `
@@ -65,9 +73,12 @@ const renderNewMovieElement = (id, title, imgURL, rating) => {
             <p>${rating}/5 stars<p>
         </div>
     `;
-    newMovieElement.addEventListener('click', deleteMovieHandler.bind(null, id));
     const listRoot = document.getElementById('movie-list');
     listRoot.append(newMovieElement);
+    newMovieElement.addEventListener('click', () => {
+        const id = movieID;
+        deleteMovieHandler(movieID);
+    });
 }
 
 const toggleMovieModalHandler = () => {
@@ -96,7 +107,7 @@ const addMovieHandler = () => {
     const imageUrlValue = userInputs[1].value;
     const ratingValue = userInputs[2].value;
     const nonValidAlert = () => {
-        alert('Please enter vaalid values (rating between 1 and 5).');
+        alert('Please enter valid values (rating between 1 and 5).');
     }
 
     switch ('') {
